@@ -8,5 +8,6 @@
 ## IconTexture: Interface\ICONS\Achievement_arena_2v2_7
 ## SavedVariables: mArenaDB
 ## X-Curse-Project-ID: 1105801
+## X-Wago-ID: XKq9pwKy
 
 mArena.xml
