@@ -1,0 +1,412 @@
+<Ui xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
+    <Script file="Ace3\LibStub\LibStub.lua" />
+    <Include file="Ace3\CallbackHandler-1.0\CallbackHandler-1.0.xml" />
+    <Include file="Ace3\AceDB-3.0\AceDB-3.0.xml" />
+    <Include file="Ace3\AceDBOptions-3.0\AceDBOptions-3.0.xml" />
+    <Include file="Ace3\AceConsole-3.0\AceConsole-3.0.xml" />
+    <Include file="Ace3\AceGUI-3.0\AceGUI-3.0.xml" />
+    <Include file="Ace3\AceConfig-3.0\AceConfig-3.0.xml" />
+
+    <Script file="mArena.lua" />
+    <Script file="Config.lua" />
+    <Script file="Modules\Auras.lua" />
+    <Script file="Modules\DiminishingReturns.lua" />
+    <Script file="Modules\Racials.lua" />
+    <Script file="Layouts\BlizzArenaModern.lua" />
+    <Script file="Layouts\BlizzArenaClassic.lua" />
+    <Script file="Layouts\BlizzTourney.lua" />
+    <Script file="Layouts\BlizzTarget.lua" />
+    <Script file="Layouts\Xaryu.lua" />
+
+    <Frame name="mArenaDRTrackerTemplate" hidden="true" virtual="true">
+        <Size>
+            <AbsDimension x="40" y="40" />
+        </Size>
+        <Layers>
+            <Layer level="ARTWORK" textureSubLevel="1">
+                <Texture parentKey="Border" file="Interface\AddOns\mArena\Textures\Border" />
+            </Layer>
+            <Layer level="ARTWORK" textureSubLevel="0">
+                <Texture parentKey="Icon">
+                    <TexCoords left="0.08" right="0.92" top="0.08" bottom="0.92" />
+                </Texture>
+            </Layer>
+            <Layer level="OVERLAY" textureSubLevel="1">
+                <Texture parentKey="Texture" setAllPoints="true" />
+                <MaskTexture parentKey="Mask" setAllPoints="true"
+                    file="Interface\CharacterFrame\TempPortraitAlphaMask" />
+            </Layer>
+        </Layers>
+
+        <Frames>
+            <Cooldown parentKey="Cooldown" drawBling="false" hideCountdownNumbers="false"
+                inherits="CooldownFrameTemplate">
+                <SwipeTexture>
+                    <Color r="0" g="0" b="0" a="0.6" />
+                </SwipeTexture>
+                <Scripts>
+                    <OnLoad>
+                        self:SetDrawBling(false)
+                        for _, region in next, { self:GetRegions() } do
+                        if region:GetObjectType() == "FontString" then
+                        self.Text = region;
+                        self.Text.fontFile = region:GetFont();
+                        end
+                        end
+                        self.parent = self:GetParent();
+                    </OnLoad>
+                    <OnShow>
+                        self.parent:GetParent():UpdateDRPositions();
+                    </OnShow>
+                    <OnHide>
+                        self.parent:Hide();
+                        self.parent.severity = 1;
+                        self.parent:GetParent():UpdateDRPositions();
+                    </OnHide>
+                </Scripts>
+            </Cooldown>
+        </Frames>
+
+        <Scripts>
+            <OnLoad>
+                self.severity = 1;
+            </OnLoad>
+        </Scripts>
+    </Frame>
+
+    <!--inherits="CastingBarFrameTemplate" -->
+    <StatusBar name="mArenaCastBarTemplate" mixin="CastingBarMixin"
+        inherits="CastingBarFrameAnimsTemplate" enablemouse="true" movable="true" virtual="true"
+        hidden="true">
+        <BarTexture atlas="ui-castingbar-filling-standard" useAtlasSize="true" />
+        <Layers>
+            <Layer level="BACKGROUND" textureSubLevel="0">
+                <Texture parentKey="DropShadow" atlas="castbar_shadow_embedded" hidden="true">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="0" y="0" />
+                        <Anchor point="BOTTOMRIGHT" x="3" y="-3" />
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="BACKGROUND" textureSubLevel="1">
+                <Texture parentKey="InterruptGlow" alpha="0" alphaMode="ADD"
+                    atlas="cast_interrupt_outerglow" useAtlasSize="true" scale="0.5">
+                    <Anchors>
+                        <Anchor point="CENTER" x="0" y="0" />
+                    </Anchors>
+                </Texture>
+                <Texture parentKey="ChargeGlow" hidden="true" atlas="cast_empowered_outerglow"
+                    useAtlasSize="true" scale="0.5">
+                    <Anchors>
+                        <Anchor point="CENTER" x="0" y="0" />
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="BACKGROUND" textureSubLevel="2">
+                <Texture parentKey="Background" atlas="ui-castingbar-background">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="-1" y="1" />
+                        <Anchor point="BOTTOMRIGHT" x="1" y="-1" />
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="ARTWORK" textureSubLevel="1">
+                <Texture parentKey="EnergyGlow" alpha="0" alphaMode="ADD"
+                    atlas="Cast_Standard_GlowLine" useAtlasSize="true" scale="0.51">
+                    <Anchors>
+                        <Anchor point="CENTER" x="0" y="-100" />
+                    </Anchors>
+                </Texture>
+                <MaskTexture parentKey="EnergyMask" alpha="1" alphaMode="BLEND"
+                    atlas="Cast_Standard_LineTextureMask" useAtlasSize="true"
+                    vWrapMode="CLAMPTOBLACKADDITIVE" hWrapMode="CLAMPTOBLACKADDITIVE" scale="0.5">
+                    <Anchors>
+                        <Anchor point="CENTER" />
+                    </Anchors>
+                    <MaskedTextures>
+                        <MaskedTexture childKey="EnergyGlow" />
+                    </MaskedTextures>
+                </MaskTexture>
+            </Layer>
+            <Layer level="ARTWORK" textureSubLevel="4">
+                <Texture parentKey="BorderShield" atlas="ui-castingbar-shield" hidden="true">
+                    <Size x="29" y="33" />
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="-27" y="4" />
+                    </Anchors>
+                </Texture>
+                <Texture parentKey="Icon">
+                    <Size x="16" y="16" />
+                    <Anchors>
+                        <Anchor point="RIGHT" relativePoint="LEFT" x="-5" y="0" />
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="ARTWORK" textureSubLevel="5">
+                <Texture parentKey="BaseGlow" alpha="0" alphaMode="ADD" atlas="Channel_WispGlow2"
+                    useAtlasSize="true" scale="0.5">
+                    <Anchors>
+                        <Anchor point="LEFT" x="0" y="0" />
+                    </Anchors>
+                </Texture>
+                <Texture parentKey="WispGlow" alpha="0" alphaMode="ADD"
+                    atlas="Cast_Channel_WispGlow" useAtlasSize="true" scale="0.5">
+                    <Anchors>
+                        <Anchor point="LEFT" x="25" y="0" />
+                    </Anchors>
+                </Texture>
+                <MaskTexture parentKey="WispMask" alpha="1" alphaMode="BLEND"
+                    atlas="Cast_Channel_WispMask" useAtlasSize="true"
+                    vWrapMode="CLAMPTOBLACKADDITIVE" hWrapMode="CLAMPTOBLACKADDITIVE" scale="0.5">
+                    <Anchors>
+                        <Anchor point="LEFT" x="-90" y="-2" />
+                    </Anchors>
+                    <MaskedTextures>
+                        <MaskedTexture childKey="WispGlow" />
+                    </MaskedTextures>
+                </MaskTexture>
+                <Texture parentKey="Sparkles01" alpha="0" alphaMode="BLEND"
+                    atlas="Cast_Channel_Sparkles_01" useAtlasSize="true" scale="0.5">
+                    <Anchors>
+                        <Anchor point="LEFT" />
+                    </Anchors>
+                </Texture>
+                <Texture parentKey="Sparkles02" alpha="0" alphaMode="BLEND"
+                    atlas="Cast_Channel_Sparkles_02" useAtlasSize="true" scale="0.5">
+                    <Anchors>
+                        <Anchor point="LEFT" />
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="OVERLAY" textureSubLevel="1">
+                <Texture parentKey="Flash" atlas="ui-castingbar-full-glow-standard" alphaMode="ADD">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="-1" y="1" />
+                        <Anchor point="BOTTOMRIGHT" x="1" y="-1" />
+                    </Anchors>
+                </Texture>
+                <Texture parentKey="ChargeFlash" alpha="0" atlas="ui-castingbar-full-glow-standard"
+                    alphaMode="ADD" setAllPoints="true" />
+                <FontString parentKey="Text" inherits="GameFontHighlightSmall" setAllPoints="true" />
+                <FontString parentKey="CastTimeText" inherits="GameFontHighlightLarge">
+                    <Anchors>
+                        <Anchor point="LEFT" relativePoint="LEFT" x="-10" y="0" />
+                    </Anchors>
+                </FontString>
+            </Layer>
+            <Layer level="OVERLAY" textureSubLevel="2">
+                <Texture parentKey="Spark" atlas="ui-castingbar-pip">
+                    <Size x="8" y="20" />
+                    <Anchors>
+                        <Anchor point="CENTER" x="0" y="0" />
+                    </Anchors>
+                </Texture>
+                <Texture parentKey="Shine" alpha="0" alphaMode="ADD" atlas="Cast_Crafting_ShineWipe"
+                    useAtlasSize="true" scale="0.5">
+                    <Anchors>
+                        <Anchor point="CENTER" x="0" y="-110" />
+                    </Anchors>
+                </Texture>
+                <MaskTexture parentKey="CraftingMask" alpha="1" alphaMode="BLEND"
+                    atlas="Cast_Crafting_LineTextureMask" useAtlasSize="true"
+                    vWrapMode="CLAMPTOBLACKADDITIVE" hWrapMode="CLAMPTOBLACKADDITIVE" scale="0.5">
+                    <Anchors>
+                        <Anchor point="CENTER" />
+                    </Anchors>
+                    <MaskedTextures>
+                        <MaskedTexture childKey="Shine" />
+                    </MaskedTextures>
+                </MaskTexture>
+            </Layer>
+            <Layer level="OVERLAY" textureSubLevel="3">
+                <Texture parentKey="StandardGlow" alpha="1" alphaMode="ADD"
+                    atlas="cast_standard_pipglow" hidden="true">
+                    <Size x="37" y="12" />
+                    <Anchors>
+                        <Anchor point="RIGHT" relativePoint="LEFT" relativeKey="$parent.Spark" x="2"
+                            y="0" />
+                    </Anchors>
+                </Texture>
+                <Texture parentKey="CraftGlow" alpha="1" alphaMode="ADD"
+                    atlas="cast_crafting_pipglow" hidden="true">
+                    <Size x="37" y="12" />
+                    <Anchors>
+                        <Anchor point="RIGHT" relativePoint="LEFT" relativeKey="$parent.Spark" x="2"
+                            y="0" />
+                    </Anchors>
+                </Texture>
+                <Texture parentKey="ChannelShadow" alpha="1" alphaMode="BLEND"
+                    atlas="cast_channel_pipshadow" hidden="true">
+                    <Size x="11" y="11" />
+                    <Anchors>
+                        <Anchor point="RIGHT" relativePoint="LEFT" relativeKey="$parent.Spark" x="1"
+                            y="0" />
+                    </Anchors>
+                </Texture>
+                <MaskTexture parentKey="BorderMask" atlas="cast_standard_barmask"
+                    hWrapMode="CLAMPTOBLACKADDITIVE" vWrapMode="CLAMPTOBLACKADDITIVE">
+                    <Size x="256" y="13" />
+                    <Anchors>
+                        <Anchor point="CENTER" x="0" y="0" />
+                    </Anchors>
+                    <MaskedTextures>
+                        <MaskedTexture childKey="StandardGlow" />
+                        <MaskedTexture childKey="CraftGlow" />
+                        <MaskedTexture childKey="ChannelShadow" />
+                        <MaskedTexture childKey="EnergyGlow" />
+                        <MaskedTexture childKey="Shine" />
+                        <MaskedTexture childKey="BaseGlow" />
+                        <MaskedTexture childKey="WispGlow" />
+                        <MaskedTexture childKey="Sparkles01" />
+                        <MaskedTexture childKey="Sparkles02" />
+                    </MaskedTextures>
+                </MaskTexture>
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnLoad>
+                self:OnLoad(nil, true, false);
+            </OnLoad>
+            <OnEvent method="OnEvent" />
+            <OnUpdate method="OnUpdate" />
+            <OnShow method="OnShow" />
+        </Scripts>
+    </StatusBar>
+
+    <Frame name="mArenaIconTemplate" enablemouse="true" movable="true" virtual="true">
+        <Layers>
+            <Layer level="OVERLAY" textureSubLevel="1">
+                <Texture parentKey="Texture" setAllPoints="true" />
+                <MaskTexture parentKey="Mask" setAllPoints="true"
+                    file="Interface\CharacterFrame\TempPortraitAlphaMask" />
+            </Layer>
+        </Layers>
+        <Frames>
+            <Cooldown parentKey="Cooldown" hideCountdownNumbers="false"
+                inherits="CooldownFrameTemplate">
+                <Scripts>
+                    <OnLoad>
+                        for _, region in next, { self:GetRegions() } do
+                        if region:GetObjectType() == "FontString" then
+                        self.Text = region;
+                        self.Text.fontFile = region:GetFont();
+                        end
+                        end
+                        self:SetSwipeTexture(1);
+                        self:SetSwipeColor(0, 0, 0, 0.6);
+                        self:SetDrawBling(false);
+                    </OnLoad>
+                </Scripts>
+            </Cooldown>
+        </Frames>
+    </Frame>
+
+    <Button name="mArenaEnemyFrameTemplate" frameStrata="MEDIUM" frameLevel="3"
+        mixin="mArenaFrameMixin" hidden="true" virtual="true" inherits="SecureActionButtonTemplate">
+        <Layers>
+            <Layer level="BORDER" textureSubLevel="1">
+                <!-- Health/power bar is in this layer -->
+                <Texture parentKey="ClassIcon" />
+                <MaskTexture parentKey="ClassIconMask"
+                    file="Interface\CharacterFrame\TempPortraitAlphaMask" />
+                <Texture parentKey="myHealPredictionBar" inherits="MyHealPredictionBarTemplate" />
+                <Texture parentKey="otherHealPredictionBar"
+                    inherits="OtherHealPredictionBarTemplate" />
+                <Texture parentKey="totalAbsorbBar" inherits="TotalAbsorbBarTemplate">
+                    <KeyValues>
+                        <KeyValue key="fillTexture" value="Interface\RaidFrame\Shield-Fill"
+                            type="string" />
+                    </KeyValues>
+                </Texture>
+            </Layer>
+
+            <Layer level="ARTWORK" textureSubLevel="1">
+                <Texture parentKey="healAbsorbBar" inherits="HealAbsorbBarTemplate" />
+            </Layer>
+
+
+            <Layer level="ARTWORK" textureSubLevel="3">
+                <FontString parentKey="Name" />
+                <FontString parentKey="HealthText" />
+                <FontString parentKey="PowerText" />
+                <Texture parentKey="overAbsorbGlow" inherits="OverAbsorbGlowTemplate" />
+                <Texture parentKey="overHealAbsorbGlow" inherits="OverHealAbsorbGlowTemplate" />
+                <Texture parentKey="totalAbsorbBarOverlay" inherits="TotalAbsorbBarOverlayTemplate" />
+            </Layer>
+
+            <Layer level="OVERLAY" textureSubLevel="2">
+                <Texture parentKey="DeathIcon" atlas="DeathIcon" hidden="true">
+                    <TexCoords left="0" right="1" top="0" bottom="0.5"/>
+                </Texture>
+            </Layer>
+        </Layers>
+
+        <Frames>
+            <StatusBar parentKey="HealthBar" drawLayer="BORDER" useParentLevel="true" />
+            <StatusBar parentKey="PowerBar" drawLayer="BORDER" useParentLevel="true" />
+            <StatusBar parentKey="CastBar" inherits="mArenaCastBarTemplate" />
+            <Cooldown parentKey="ClassIconCooldown" drawLayer="BORDER" useParentLevel="true"
+                reverse="true" hideCountdownNumbers="false" inherits="CooldownFrameTemplate">
+                <Scripts>
+                    <OnLoad>
+                        for _, region in next, { self:GetRegions() } do
+                        if region:GetObjectType() == "FontString" then
+                        self.Text = region;
+                        self.Text.fontFile = region:GetFont();
+                        end
+                        end
+                        self:SetAllPoints(self:GetParent().ClassIcon)
+                        self:SetSwipeTexture(1)
+                        self:SetSwipeColor(0, 0, 0, 0.6)
+                        self:SetDrawBling(false)
+                    </OnLoad>
+                </Scripts>
+            </Cooldown>
+            <Frame parentKey="SpecIcon" enablemouse="true" movable="true">
+                <Layers>
+                    <Layer level="ARTWORK" textureSubLevel="2">
+                        <Texture parentKey="Texture" setAllPoints="true" />
+                        <MaskTexture parentKey="Mask" setAllPoints="true"
+                            file="Interface\CharacterFrame\TempPortraitAlphaMask" />
+                    </Layer>
+                </Layers>
+            </Frame>
+            <Frame parentKey="Trinket" inherits="mArenaIconTemplate" />
+            <Frame parentKey="Racial" inherits="mArenaIconTemplate" />
+            <Frame parentKey="Incapacitate" inherits="mArenaDRTrackerTemplate" />
+            <Frame parentKey="Silence" inherits="mArenaDRTrackerTemplate" />
+            <Frame parentKey="Disorient" inherits="mArenaDRTrackerTemplate" />
+            <Frame parentKey="Stun" inherits="mArenaDRTrackerTemplate" enablemouse="true"
+                movable="true" />
+            <Frame parentKey="Root" inherits="mArenaDRTrackerTemplate" />
+        </Frames>
+
+        <Scripts>
+            <OnEvent method="OnEvent" />
+            <OnLoad method="OnLoad" />
+            <OnEnter method="OnEnter" />
+            <OnLeave method="OnLeave" />
+        </Scripts>
+    </Button>
+
+    <Frame name="mArena" mixin="mArenaMixin" movable="true" parent="UIParent">
+        <Size x="1" y="1" />
+        <Frames>
+            <Button name="mArenaEnemyFrame1" parentKey="arena1" inherits="mArenaEnemyFrameTemplate"
+                id="1">
+                <Anchors>
+                    <Anchor point="CENTER" />
+                </Anchors>
+            </Button>
+            <Button name="mArenaEnemyFrame2" parentKey="arena2" inherits="mArenaEnemyFrameTemplate"
+                id="2" />
+            <Button name="mArenaEnemyFrame3" parentKey="arena3" inherits="mArenaEnemyFrameTemplate"
+                id="3" />
+        </Frames>
+
+        <Scripts>
+            <OnEvent method="OnEvent" />
+            <OnLoad method="OnLoad" />
+        </Scripts>
+    </Frame>
+</Ui>
