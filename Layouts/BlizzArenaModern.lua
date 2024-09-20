@@ -105,21 +105,27 @@ function layout:Initialize(frame)
     frame.ClassIconCooldown:SetUseCircularEdge(true)
 
     frame:SetSize(120, 42)
+
     frame.SpecIcon:SetSize(14, 14)
     frame.SpecIcon.Texture:AddMaskTexture(frame.SpecIcon.Mask)
+    frame.SpecIcon.Texture:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+
     frame.Trinket:SetSize(22, 22)
     frame.Trinket.Texture:AddMaskTexture(frame.Trinket.Mask)
     frame.Trinket.Cooldown:SetSwipeTexture([[Interface\CharacterFrame\TempPortraitAlphaMask]])
+    frame.Trinket.Texture:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+
     frame.Racial:SetSize(22.5, 22)
     frame.Racial.Texture:AddMaskTexture(frame.Racial.Mask)
     frame.Racial.Cooldown:SetSwipeTexture([[Interface\CharacterFrame\TempPortraitAlphaMask]])
+    frame.Racial.Texture:SetTexCoord(0.08, 0.92, 0.08, 0.92)
 
     local healthBar = frame.HealthBar
     healthBar:SetSize(80, 16)
     healthBar:SetStatusBarTexture([[Interface\AddOns\mArena\Textures\HealthBar-Default]])
 
     local powerBar = frame.PowerBar
-    powerBar:SetSize(81, 9)
+    powerBar:SetSize(81.65, 9)
     powerBar:SetPoint("TOPLEFT", healthBar, "BOTTOMLEFT", 0, -1)
     powerBar:SetStatusBarTexture([[Interface\AddOns\mArena\Textures\ManaBar-Default]])
 
@@ -129,7 +135,6 @@ function layout:Initialize(frame)
     f:AddMaskTexture(frame.ClassIconMask)
     frame.ClassIconMask:SetAllPoints(f)
 
-    frame.TrinketBorder = frame.TexturePool:Acquire()
     frame.TrinketBorder = frame.TexturePool:Acquire()
     frame.TrinketBorder:SetParent(frame.Trinket)
     frame.TrinketBorder:SetDrawLayer("OVERLAY", 3)
@@ -152,7 +157,8 @@ function layout:Initialize(frame)
     frame.SpecBorder:SetParent(frame.SpecIcon)
     frame.SpecBorder:SetDrawLayer("ARTWORK", 3)
     frame.SpecBorder:SetTexture([[Interface\AddOns\mArena\Textures\Border]])
-    frame.SpecBorder:SetScale(0.2)
+    frame.SpecBorder:SetScale(0.1)
+    frame.SpecBorder:SetSize(frame.SpecIcon:GetSize())
     frame.SpecBorder:SetPoint("TOPLEFT", frame.SpecIcon, "TOPLEFT", -5, 5)
     frame.SpecBorder:SetPoint("BOTTOMRIGHT", frame.SpecIcon, "BOTTOMRIGHT", 5, -5)
     frame.SpecBorder:Show()
