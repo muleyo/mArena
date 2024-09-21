@@ -1,6 +1,7 @@
 <p align="center">
   <img src="https://github.com/user-attachments/assets/b2cfd6e5-4b6a-4448-a1a7-6d69d795be87" alt="mArena" width=200 height=200 />
 </p>
+
 # Modern Arena Frames
 mArena is an AddOn, based on sArena but modernized. It offers you all the sArena profiles, a modern profile which uses the new Unitframe textures and the new CastBar which has been released with Dragonflight.
 
