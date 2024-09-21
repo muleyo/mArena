@@ -2,7 +2,7 @@
 ## Title: mArena |cff00a2ff(by muleyo)|r
 ## Notes: Modern Arena Frames
 ## Author: muleyo
-## Version: 1.0.1
+## Version: 1.0.2
 ## X-Category: PvP/Arena
 ## X-Credits: Stako, Tekkub, Starship, Kouri, Kollektiv, Lyn, haste, evl, Zork, jturel, wardz, yaggertv
 ## IconTexture: Interface\ICONS\Achievement_arena_2v2_7

@@ -130,6 +130,10 @@ function mArenaFrameMixin:UpdateRacial()
 
         if ( self.parent.db.profile.racialCategories[self.race] ) then
             self.Racial.Texture:SetTexture(racialData[self.race].texture)
+
+            if self.RacialBorder then
+                self.RacialBorder:Show()
+            end
         end
     end
 end
@@ -138,5 +142,6 @@ function mArenaFrameMixin:ResetRacial()
     self.race = nil
     self.Racial.Texture:SetTexture(nil)
     self.Racial.Cooldown:Clear()
+    self.RacialBorder:Hide()
     self:UpdateRacial()
 end

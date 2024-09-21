@@ -389,15 +389,16 @@ function mArenaFrameMixin:OnEvent(event, eventUnit, arg1, arg2 )
         elseif (event == "ARENA_OPPONENT_UPDATE") then
             self:UpdateVisible()
             self:UpdatePlayer(arg1)
-        elseif (event == "ARENA_COOLDOWNS_UPDATE") then
-            -- if DLAPI then DLAPI.DebugLog("ARENA_COOLDOWNS_UPDATE", "ARENA_COOLDOWNS_UPDATE") end
-            -- self:UpdateTrinket()
         elseif (event == "ARENA_CROWD_CONTROL_SPELL_UPDATE") then
             -- arg1 == spellID
             if (arg1 ~= self.Trinket.spellID) then
                 local _, spellTextureNoOverride = C_Spell.GetSpellTexture(arg1)
                 self.Trinket.spellID = arg1
                 self.Trinket.Texture:SetTexture(spellTextureNoOverride)
+
+                if self.TrinketBorder then
+                    self.TrinketBorder:Show()
+                end
             end
         elseif (event == "UNIT_AURA") then
             self:FindAura()
@@ -824,29 +825,11 @@ function mArenaFrameMixin:UpdateTrinketSammers(unit, spellId)
     end
 end
 
-function mArenaFrameMixin:UpdateTrinket()
-    local spellID, startTime, duration = C_PvP.GetArenaCrowdControlInfo(self.unit)
-    local trinket = self.Trinket
-    if DLAPI then DLAPI.DebugLog("UpdateTrinket", "UpdateTrinket spellID: " .. spellID .. " startTime: " .. startTime .. " duration: " .. duration) end
-    if (spellID) then
-        if (spellID ~= trinket.spellID) then
-            local _, spellTextureNoOverride = C_Spell.GetSpellTexture(spellID)
-            trinket.spellID = spellID
-            trinket.Texture:SetTexture(spellTextureNoOverride)
-        end
-        if (startTime ~= 0 and duration ~= 0 and trinket.Texture:GetTexture()) then
-            trinket.Cooldown:SetCooldown(startTime / 1000.0, duration / 1000.0)
-        else
-            trinket.Cooldown:Clear()
-        end
-    end
-end
-
 function mArenaFrameMixin:ResetTrinket()
     self.Trinket.spellID = nil
     self.Trinket.Texture:SetTexture(nil)
     self.Trinket.Cooldown:Clear()
-    -- self:UpdateTrinket()
+    self.TrinketBorder:Hide()
 end
 
 local function ResetStatusBar(f)
@@ -1071,9 +1054,15 @@ function mArenaMixin:Test()
 
         frame.Trinket.Texture:SetTexture(1322720)
         frame.Trinket.Cooldown:SetCooldown(currTime, math.random(20, 60))
+        if frame.TrinketBorder then
+            frame.TrinketBorder:Show()
+        end
 
         frame.Racial.Texture:SetTexture(136129)
         frame.Racial.Cooldown:SetCooldown(currTime, math.random(20, 60))
+        if frame.RacialBorder then
+            frame.RacialBorder:Show()
+        end
 
         local color = RAID_CLASS_COLORS["MAGE"]
         if (db.profile.classColors) then
