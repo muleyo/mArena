@@ -400,6 +400,14 @@ function mArenaFrameMixin:OnEvent(event, eventUnit, arg1, arg2 )
                     self.TrinketBorder:Show()
                 end
             end
+
+            local _, spellTextureNoOverride = C_Spell.GetSpellTexture(arg1)
+
+            if not spellTextureNoOverride then
+                if self.TrinketBorder then
+                    self.TrinketBorder:Hide()
+                end
+            end
         elseif (event == "UNIT_AURA") then
             self:FindAura()
         elseif (event == "UNIT_HEALTH") then
