@@ -106,16 +106,18 @@ function layout:Initialize(frame)
 
     frame:SetSize(120, 42)
 
+    for i = 1,3 do _G["mArenaEnemyFrame" .. i].SpecIcon:SetSize(14.5, 13.5) end
+
     frame.SpecIcon:SetSize(14, 14)
     frame.SpecIcon.Texture:AddMaskTexture(frame.SpecIcon.Mask)
-    frame.SpecIcon.Texture:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+    --frame.SpecIcon.Texture:SetTexCoord(0.5, 0.92, 0.5, 0.92)
 
     frame.Trinket:SetSize(22, 22)
     frame.Trinket.Texture:AddMaskTexture(frame.Trinket.Mask)
     frame.Trinket.Cooldown:SetSwipeTexture([[Interface\CharacterFrame\TempPortraitAlphaMask]])
     --frame.Trinket.Texture:SetTexCoord(0.08, 0.92, 0.08, 0.92)
 
-    frame.Racial:SetSize(22.5, 22)
+    frame.Racial:SetSize(22, 22)
     frame.Racial.Texture:AddMaskTexture(frame.Racial.Mask)
     frame.Racial.Cooldown:SetSwipeTexture([[Interface\CharacterFrame\TempPortraitAlphaMask]])
     frame.Racial.Texture:SetTexCoord(0.08, 0.92, 0.08, 0.92)
@@ -130,7 +132,7 @@ function layout:Initialize(frame)
     powerBar:SetStatusBarTexture([[Interface\AddOns\mArena\Textures\ManaBar-Default]])
 
     local f = frame.ClassIcon
-    f:SetSize(38, 38)
+    f:SetSize(37.5, 36.5)
     f:Show()
     f:AddMaskTexture(frame.ClassIconMask)
     frame.ClassIconMask:SetAllPoints(f)
@@ -155,8 +157,7 @@ function layout:Initialize(frame)
     frame.SpecBorder:SetParent(frame.SpecIcon)
     frame.SpecBorder:SetDrawLayer("ARTWORK", 3)
     frame.SpecBorder:SetTexture([[Interface\AddOns\mArena\Textures\Border]])
-    frame.SpecBorder:SetScale(0.2)
-    frame.SpecBorder:SetSize(frame.SpecIcon:GetSize())
+    frame.SpecBorder:SetScale(0.15)
     frame.SpecBorder:SetPoint("TOPLEFT", frame.SpecIcon, "TOPLEFT", -5, 5)
     frame.SpecBorder:SetPoint("BOTTOMRIGHT", frame.SpecIcon, "BOTTOMRIGHT", 5, -5)
     frame.SpecBorder:Show()
@@ -171,14 +172,14 @@ function layout:Initialize(frame)
     local typeInfoTexture = "Interface\\TargetingFrame\\UI-StatusBar";
     f:SetStatusBarTexture(typeInfoTexture)
     f.typeInfo = {
-        applyingcrafting = { 
+        applyingcrafting = {
             filling = "ui-castingbar-filling-applyingcrafting",
             full = "ui-castingbar-full-applyingcrafting",
             glow = "ui-castingbar-full-glow-applyingcrafting",
             sparkFx = "CraftingGlow",
             finishAnim = "CraftingFinish",
         },
-        applyingtalents = { 
+        applyingtalents = {
             filling = "ui-castingbar-filling-standard",
             full = "ui-castingbar-full-standard",
             glow = "ui-castingbar-full-glow-standard",
@@ -191,12 +192,12 @@ function layout:Initialize(frame)
             sparkFx = "StandardGlow",
             finishAnim = "StandardFinish",
         },
-        empowered = { 
+        empowered = {
             filling = "",
             full = "",
             glow = "",
         },
-        channel = { 
+        channel = {
             filling = "ui-castingbar-filling-channel",
             full = "ui-castingbar-full-channel",
             glow = "ui-castingbar-full-glow-channel",
@@ -208,7 +209,7 @@ function layout:Initialize(frame)
             full = "ui-castingbar-uninterruptable",
             glow = "ui-castingbar-full-glow-standard",
         },
-        interrupted = { 
+        interrupted = {
             filling = "ui-castingbar-interrupted",
             full = "ui-castingbar-interrupted",
             glow = "ui-castingbar-full-glow-standard",
